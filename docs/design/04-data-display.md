@@ -1,0 +1,89 @@
+# Visual Data Display — Metrics People Can See
+
+## Intent
+
+After city things are visible, data must be shown *visually* — not as a spreadsheet that happens to sit beside a map.
+
+Visual data display answers: *How is it doing? Is it changing? Does it need attention?*
+
+## Display Modes
+
+### 1. Status Block
+
+Large state word + color bar + last-updated age.
+
+Use for: online / warning / critical / offline.
+
+### 2. Spark & Trend
+
+Compact line or area chart for the last 1h / 24h / 7d.
+
+Use for: traffic volume, power load, AQI.
+
+### 3. Composition Rings / Bars
+
+Share of capacity or category mix.
+
+Use for: parking fill, energy mix, waste diversion.
+
+### 4. Heat & Density on Canvas
+
+District-level intensity painted on the map itself.
+
+Use for: congestion, pollution plumes, outage clusters.
+
+### 5. Event Timeline
+
+Vertical visual log of alerts and state changes.
+
+Use for: incident history on a selected asset.
+
+## Selection Contract
+
+When an asset is selected:
+
+1. Canvas focuses the asset (visualize).
+2. Data Stage opens with:
+   - identity (name, domain, location)
+   - status block
+   - primary metric visual
+   - secondary trend
+   - recent events
+
+Raw tables are optional and collapsed by default.
+
+## Metric Priority
+
+For each domain, define one **hero metric** and two supporting metrics:
+
+| Domain | Hero metric | Supporting |
+|--------|-------------|------------|
+| Traffic | Congestion index | Throughput, incident count |
+| Energy | Load vs capacity | Outage minutes, renewable share |
+| Environment | AQI | PM2.5, noise dB |
+| Safety | Device health % | Open incidents, response time |
+| Civic | Service availability | Queue length, daily visits |
+
+## Stale & Missing Data
+
+| Condition | Visual treatment |
+|-----------|------------------|
+| Live (< 2 min) | Solid accent |
+| Aging (2–15 min) | Desaturated + “aging” label |
+| Stale (> 15 min) | Hatch pattern + timestamp |
+| Missing | Hollow glyph + “no feed” |
+
+## Anti-Patterns
+
+- Leading with dense numeric tables
+- More than three charts competing in the Data Stage
+- Status chips that only change color with no text/shape change
+- Dashboard widgets floating over the city canvas as stickers
+
+## Prototype Mapping
+
+The included `web/` prototype demonstrates:
+
+- City Canvas with domain layers and asset glyphs
+- Click-to-select focus
+- Data Stage with status, hero metric, trend sparkline, and event list

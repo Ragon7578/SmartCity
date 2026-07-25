@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Urban Lens — Smart City Visualization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;550;650&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand__mark">Urban <span>Lens</span></div>
+          <p class="brand__tag">
+            Visualize the city first. Then show the data on top of what you can see.
+          </p>
+        </div>
+        <div class="layers" role="group" aria-label="Domain layers">
+          <button class="layer" type="button" data-domain="traffic" aria-pressed="true">Traffic</button>
+          <button class="layer" type="button" data-domain="energy" aria-pressed="true">Energy</button>
+          <button class="layer" type="button" data-domain="environment" aria-pressed="true">Environment</button>
+          <button class="layer" type="button" data-domain="safety" aria-pressed="true">Safety</button>
+          <button class="layer" type="button" data-domain="civic" aria-pressed="true">Civic</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="canvas-shell" aria-label="City canvas">
+          <svg class="city-svg" viewBox="0 0 100 100" role="img" aria-label="Interactive city visualization">
+            <defs>
+              <linearGradient id="water" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#7fa8b8" stop-opacity="0.35" />
+                <stop offset="100%" stop-color="#5e8798" stop-opacity="0.2" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 0 55 C 18 48, 28 70, 40 78 C 52 86, 70 92, 100 84 L 100 100 L 0 100 Z"
+              fill="url(#water)"
+            />
+            <g id="districts"></g>
+            <g id="corridors"></g>
+            <g id="assets"></g>
+          </svg>
+          <p class="canvas-hint" id="canvas-hint">
+            Click a city asset to focus it and open visual metrics.
+          </p>
+        </section>
+
+        <aside class="data-stage" aria-live="polite">
+          <div id="data-empty" class="data-stage__empty">
+            <h2>Data stays visual</h2>
+            <p>
+              Select a signal, station, or civic site on the canvas. Metrics appear as status,
+              meters, and trends — not a spreadsheet first.
+            </p>
+          </div>
+
+          <div id="data-detail" class="hidden">
+            <header class="data-stage__header">
+              <p class="data-stage__domain" id="detail-domain">Domain</p>
+              <h2 class="data-stage__title" id="detail-title">Asset</h2>
+            </header>
+
+            <div class="status" id="detail-status" data-status="online">
+              <div class="status__bar" aria-hidden="true"></div>
+              <div>
+                <p class="status__label" id="detail-status-label">online</p>
+                <p class="status__meta" id="detail-status-meta">Live feed</p>
+              </div>
+            </div>
+
+            <div class="hero-metric">
+              <p class="hero-metric__label" id="detail-hero-label">Hero metric</p>
+              <p class="hero-metric__value" id="detail-hero-value">0</p>
+              <div class="meter" aria-hidden="true"><span id="detail-meter"></span></div>
+            </div>
+
+            <dl class="supporting" id="detail-supporting"></dl>
+
+            <div class="trend">
+              <p class="trend__label">Recent trend</p>
+              <div id="detail-trend"></div>
+            </div>
+
+            <ul class="events" id="detail-events"></ul>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script src="./js/data.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
