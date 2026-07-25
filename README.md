@@ -2,6 +2,8 @@
 
 **Urban Lens (城景)** — visualize city things first, then display data visually.
 
+Primary remote (Gitee): https://gitee.com/ragon6749/smart-city
+
 Backend is a **Spring Cloud microservice** architecture. Business domains are separate expandable modules.
 
 ## Modules
