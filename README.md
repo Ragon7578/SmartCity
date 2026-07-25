@@ -8,4 +8,4 @@ Projects live under `projects/<project-name>/`.
 |---------|------|-------------|
 | smart-city | [`projects/smart-city/`](projects/smart-city/) | Urban Lens 智慧城市 Spring Cloud platform |
 
-Primary remote (Gitee): https://gitee.com/ragon6749/smart-city
+Remote: https://github.com/Ragon7578/smartCity

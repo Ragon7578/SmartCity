@@ -4,7 +4,7 @@
 
 Project path: `projects/smart-city/`
 
-Primary remote (Gitee): https://gitee.com/ragon6749/smart-city
+Remote: https://github.com/Ragon7578/smartCity
 
 Backend is a **Spring Cloud microservice** architecture. Business domains are separate expandable modules.
 
