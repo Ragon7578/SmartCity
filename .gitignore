@@ -31,3 +31,10 @@ node_modules/
 dist/
 .env
 .env.*
+
+# Maven / Java
+backend/target/
+*.iml
+.classpath
+.project
+.settings/

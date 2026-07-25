@@ -6,12 +6,15 @@
   const emptyState = document.getElementById("data-empty");
   const detailState = document.getElementById("data-detail");
   const canvasHint = document.getElementById("canvas-hint");
+  const serviceBadge = document.getElementById("service-badge");
 
   const activeDomains = new Set(
     layers.filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => b.dataset.domain)
   );
 
+  let scene = { districts: [], corridors: [], assets: [] };
   let selectedId = null;
+  let refreshTimer = null;
 
   function domainColor(domain) {
     return {
@@ -23,8 +26,18 @@
     }[domain];
   }
 
+  function formatMetricValue(value, unit) {
+    if (unit === "stable") {
+      return "stable";
+    }
+    if (Number.isInteger(value)) {
+      return String(value);
+    }
+    return String(Math.round(value * 10) / 10);
+  }
+
   function renderDistricts() {
-    districtsGroup.innerHTML = CITY.districts
+    districtsGroup.innerHTML = scene.districts
       .map(
         (d) => `
       <g>
@@ -36,7 +49,7 @@
   }
 
   function renderCorridors() {
-    corridorsGroup.innerHTML = CITY.corridors
+    corridorsGroup.innerHTML = scene.corridors
       .map((c) => {
         const hidden = activeDomains.size && !activeDomains.has(c.domain);
         return `<path class="corridor ${hidden ? "hidden" : ""}" data-domain="${c.domain}" d="${c.d}" />`;
@@ -45,7 +58,7 @@
   }
 
   function renderAssets() {
-    assetsGroup.innerHTML = CITY.assets
+    assetsGroup.innerHTML = scene.assets
       .map((a) => {
         const hidden = activeDomains.size && !activeDomains.has(a.domain);
         const selected = selectedId === a.id ? "is-selected" : "";
@@ -92,54 +105,73 @@
     return { line, area, w, h };
   }
 
-  function selectAsset(id) {
+  async function selectAsset(id) {
     selectedId = id;
-    const asset = CITY.assets.find((a) => a.id === id);
-    if (!asset) return;
+    canvasHint.textContent = "Loading visual metrics from the Java service…";
+    renderAssets();
 
-    emptyState.classList.add("hidden");
-    detailState.classList.remove("hidden");
-    canvasHint.textContent = "Selected asset focused — inspect visual metrics on the right.";
+    try {
+      const asset = await UrbanLensApi.getAsset(id);
+      emptyState.classList.add("hidden");
+      detailState.classList.remove("hidden");
+      canvasHint.textContent = "Selected asset focused — metrics from /api/v1/assets.";
 
-    document.getElementById("detail-domain").textContent = asset.domain;
-    document.getElementById("detail-title").textContent = asset.name;
+      document.getElementById("detail-domain").textContent = asset.domain;
+      document.getElementById("detail-title").textContent = asset.name;
 
-    const status = document.getElementById("detail-status");
-    status.dataset.status = asset.status;
-    document.getElementById("detail-status-label").textContent = asset.status;
-    document.getElementById("detail-status-meta").textContent = "Live feed · updated moments ago";
+      const status = document.getElementById("detail-status");
+      status.dataset.status = asset.status;
+      document.getElementById("detail-status-label").textContent = asset.status;
+      document.getElementById("detail-status-meta").textContent =
+        "Service feed · updated " + (asset.updatedAt || "just now");
 
-    document.getElementById("detail-hero-label").textContent = asset.hero.label;
-    document.getElementById("detail-hero-value").innerHTML =
-      `${asset.hero.value}<small>${asset.hero.unit}</small>`;
+      document.getElementById("detail-hero-label").textContent = asset.hero.label;
+      document.getElementById("detail-hero-value").innerHTML =
+        `${formatMetricValue(asset.hero.value, asset.hero.unit)}<small>${asset.hero.unit || ""}</small>`;
 
-    const pct = Math.max(0, Math.min(100, (asset.hero.value / (asset.hero.max || 100)) * 100));
-    const meter = document.getElementById("detail-meter");
-    meter.style.width = pct + "%";
-    meter.style.background = `linear-gradient(90deg, ${domainColor(asset.domain)}, ${domainColor(asset.domain)})`;
+      const max = asset.hero.max || 100;
+      const pct = Math.max(0, Math.min(100, (asset.hero.value / max) * 100));
+      const meter = document.getElementById("detail-meter");
+      meter.style.width = pct + "%";
+      meter.style.background = `linear-gradient(90deg, ${domainColor(asset.domain)}, ${domainColor(asset.domain)})`;
 
-    document.getElementById("detail-supporting").innerHTML = asset.supporting
-      .map(
-        (s) => `
-      <div>
-        <dt>${s.label}</dt>
-        <dd>${s.value}${s.unit ? ` ${s.unit}` : ""}</dd>
-      </div>`
-      )
-      .join("");
+      document.getElementById("detail-supporting").innerHTML = (asset.supporting || [])
+        .map((s) => {
+          const shown = formatMetricValue(s.value, s.unit);
+          return `
+        <div>
+          <dt>${s.label}</dt>
+          <dd>${shown}${s.unit && s.unit !== "stable" ? ` ${s.unit}` : ""}</dd>
+        </div>`;
+        })
+        .join("");
 
-    const spark = sparkline(asset.trend);
-    document.getElementById("detail-trend").innerHTML = `
+      const spark = sparkline(asset.trend || [0, 0]);
+      document.getElementById("detail-trend").innerHTML = `
       <svg viewBox="0 0 ${spark.w} ${spark.h}" preserveAspectRatio="none" aria-hidden="true">
         <path class="area" d="${spark.area}"></path>
         <path class="line" d="${spark.line}"></path>
       </svg>`;
 
-    document.getElementById("detail-events").innerHTML = asset.events
-      .map((e) => `<li><time>${e.t}</time><span>${e.text}</span></li>`)
-      .join("");
+      document.getElementById("detail-events").innerHTML = (asset.events || [])
+        .map((e) => `<li><time>${e.t}</time><span>${e.text}</span></li>`)
+        .join("");
+    } catch (err) {
+      canvasHint.textContent = "Failed to load asset: " + err.message;
+    }
+  }
 
+  async function loadScene() {
+    scene = await UrbanLensApi.getScene();
+    renderDistricts();
+    renderCorridors();
     renderAssets();
+    if (selectedId) {
+      const stillThere = scene.assets.some((a) => a.id === selectedId);
+      if (stillThere) {
+        await selectAsset(selectedId);
+      }
+    }
   }
 
   layers.forEach((btn) => {
@@ -155,7 +187,27 @@
     });
   });
 
-  renderDistricts();
-  renderCorridors();
-  renderAssets();
+  async function boot() {
+    try {
+      const info = await UrbanLensApi.getSystemInfo();
+      if (serviceBadge) {
+        serviceBadge.textContent = `${info.service} · ${info.assets} assets`;
+      }
+      await loadScene();
+      canvasHint.textContent = "City scene loaded from Java service. Click an asset.";
+      refreshTimer = window.setInterval(() => {
+        loadScene().catch(() => {});
+      }, 10000);
+    } catch (err) {
+      canvasHint.textContent =
+        "Cannot reach Java API. Start the backend: cd backend && mvn spring-boot:run";
+      if (serviceBadge) {
+        serviceBadge.textContent = "service offline";
+      }
+      emptyState.querySelector("p").textContent =
+        "Backend unavailable (" + err.message + "). Start the Spring Boot service, then reload.";
+    }
+  }
+
+  boot();
 })();

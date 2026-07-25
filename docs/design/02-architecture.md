@@ -2,19 +2,22 @@
 
 ## Overview
 
-Urban Lens is a layered smart-city visualization platform.
+Urban Lens is delivered as a **Java backend service** with a browser visualization client.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Presentation — City Canvas + Visual Data Panels        │
+│  Presentation — City Canvas + Visual Data Panels (web/) │
 ├─────────────────────────────────────────────────────────┤
-│  Visualization Service — tiles, layers, asset glyphs    │
+│  REST API — /api/v1  (Spring Boot controllers)          │
 ├─────────────────────────────────────────────────────────┤
-│  Data Fusion — normalize IoT / GIS / civic feeds        │
+│  Application Services                                   │
+│   • CitySceneService      visualization payloads        │
+│   • AssetRegistryService  city-thing catalog            │
+│   • DataFusionService     telemetry → visual status     │
 ├─────────────────────────────────────────────────────────┤
-│  Asset Registry — identity, geometry, domain tags       │
+│  Asset Registry — CityRepository (in-memory → PostGIS)  │
 ├─────────────────────────────────────────────────────────┤
-│  Source Systems — traffic, energy, env, safety, GIS     │
+│  Bootstrap — CityDataInitializer seeds the city model   │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -25,52 +28,59 @@ Urban Lens is a layered smart-city visualization platform.
 Canonical catalog of city things:
 
 - `id`, `name`, `domain` (traffic | energy | environment | safety | civic)
-- geometry (`point` | `line` | `polygon`)
-- relations (road → signals, building → meters)
-- visualization hints (icon, layer, z-order)
+- geometry (`point` for assets, path for corridors, rect for districts)
+- status + hero / supporting metrics for visual display
+
+Owned by `AssetRegistryService` + `CityRepository`.
 
 ### 2. Data Fusion
 
-Ingests telemetry and events, maps them onto assets:
+Ingests (currently simulates) telemetry and maps it onto assets:
 
-- streaming metrics (occupancy, kWh, AQI, camera health)
-- state machines (online / warning / critical / offline)
-- time-window aggregates for charts and heatmaps
+- streaming metrics and trend windows
+- status machines (online / warning / critical / offline)
+- event log entries for the Data Stage
 
-### 3. Visualization Service
+Owned by `DataFusionService`.
 
-Builds the spatial scene:
+### 3. Visualization Scene Service
 
-- basemap + thematic layers
-- asset glyphs and corridors
-- heat / flow overlays
-- camera / focus transitions for drill-down
+Builds API payloads the UI can paint:
+
+- city scene (districts, corridors, asset glyphs)
+- asset detail (status, hero metric, trend, events)
+
+Owned by `CitySceneService`.
 
 ### 4. Presentation (Urban Lens UI)
 
-Two primary surfaces:
+Two primary surfaces, served by the same Java process in v1:
 
 1. **City Canvas** — spatial visualization of managed things
-2. **Data Stage** — visual display of selected asset / district metrics
+2. **Data Stage** — visual display of selected asset metrics
 
 ## Data Flow
 
 ```
-Source → Ingest → Normalize → Bind to Asset →
-  Render on Canvas → Operator selects → Visual Data Stage updates
+Initializer → Registry
+Telemetry tick → DataFusion → Asset status/metrics
+UI → GET /api/v1/city/scene → Canvas render
+UI → GET /api/v1/assets/{id} → Data Stage visuals
 ```
 
-## Suggested Tech (prototype → production)
+## Runtime
 
-| Layer | Prototype | Production candidate |
-|-------|-----------|----------------------|
-| UI | Static HTML/CSS/JS | React + MapLibre / Cesium |
-| Assets | Local JSON | PostGIS + asset API |
-| Telemetry | Simulated ticks | MQTT / Kafka → time-series DB |
-| Auth | None | SSO + role-based layers |
+| Concern | Choice |
+|---------|--------|
+| Language | Java 21 |
+| Framework | Spring Boot 3.3 |
+| Packaging | Maven module `backend/` |
+| UI delivery | Copied into classpath `static/` at build |
+| Port | `8080` |
 
 ## Security & Ops Notes
 
-- Layer visibility is role-scoped (e.g. public safety vs. tourism).
+- Layer visibility can become role-scoped later.
 - Telemetry paths are read-mostly; write-back goes through domain systems.
-- Offline / stale data must be visually distinct from healthy live data.
+- Stale / missing data must stay visually distinct from healthy live data.
+- See [05-backend-java.md](./05-backend-java.md) for package-level detail.

@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: urban-lens-smart-city
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+urbanlens:
+  city:
+    name: Harbor Ridge
+    timezone: Asia/Shanghai
+  telemetry:
+    tick-ms: 8000

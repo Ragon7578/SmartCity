@@ -88,6 +88,14 @@ body {
   max-width: 36ch;
 }
 
+.brand__service {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--energy);
+}
+
 .layers {
   display: flex;
   flex-wrap: wrap;

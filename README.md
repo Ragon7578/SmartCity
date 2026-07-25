@@ -2,6 +2,8 @@
 
 **Urban Lens (城景)** — manage a smart city by visualizing city things first, then displaying their data visually.
 
+Java backend service + browser visualization client.
+
 ## Idea
 
 Digitization alone is not enough.
@@ -9,32 +11,53 @@ Digitization alone is not enough.
 1. **Visualize** roads, energy, environment, safety, and civic assets on a shared city canvas.
 2. **Display data visually** — status, meters, trends, and events attached to those assets.
 
-## Quick start
+## Quick start (recommended)
 
-Open the prototype in a browser:
+Requires **Java 21** and **Maven**.
 
 ```bash
-open web/index.html
-# or serve it locally, e.g.
-python3 -m http.server 8080 --directory web
+cd backend
+mvn spring-boot:run
 ```
 
-Then toggle domain layers and click assets to inspect visual metrics.
+Open [http://localhost:8080](http://localhost:8080).
 
-## Design documents
+The Spring Boot service:
 
-See [`docs/design/`](docs/design/):
+- initializes the city model on startup (`CityDataInitializer`)
+- exposes REST APIs under `/api/v1`
+- serves the Urban Lens UI from the same process
+- refreshes telemetry on a schedule
 
-| Doc | Topic |
-|-----|-------|
-| [Vision](docs/design/01-vision.md) | Product intent and principles |
-| [Architecture](docs/design/02-architecture.md) | System layers and data flow |
-| [Visualization](docs/design/03-visualization.md) | How city things become visible |
-| [Data Display](docs/design/04-data-display.md) | How metrics are shown visually |
+### Useful endpoints
 
-## Repo layout
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/city/scene` | Canvas scene (districts, corridors, assets) |
+| `GET /api/v1/assets/{id}` | Visual metrics for one asset |
+| `GET /api/v1/system/info` | Service identity |
+| `GET /actuator/health` | Health check |
+
+## Architecture
 
 ```
-docs/design/   Design pack
-web/           Interactive visualization prototype
+web/        Visualization client (calls Java API)
+backend/    Spring Boot service (registry, fusion, scene APIs)
+docs/design Design documents
+```
+
+See [`docs/design/`](docs/design/) for the full design pack, especially:
+
+- [Architecture](docs/design/02-architecture.md)
+- [Java Backend](docs/design/05-backend-java.md)
+
+## Develop frontend only
+
+The UI source lives in `web/`. During `mvn` builds it is copied into the backend classpath. Prefer running the Java service so the UI can reach `/api/v1`.
+
+## Tests
+
+```bash
+cd backend
+mvn test
 ```
