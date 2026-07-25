@@ -12,66 +12,55 @@
     </parent>
 
     <groupId>com.urbanlens</groupId>
-    <artifactId>smart-city</artifactId>
+    <artifactId>smartcity-parent</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>urban-lens-smart-city</name>
-    <description>Urban Lens smart city visualization backend service</description>
+    <packaging>pom</packaging>
+    <name>smartcity-parent</name>
+    <description>Urban Lens smart city Spring Cloud microservices</description>
+
+    <modules>
+        <module>smartcity-common</module>
+        <module>smartcity-registry</module>
+        <module>smartcity-gateway</module>
+        <module>smartcity-city-scene</module>
+        <module>smartcity-traffic</module>
+        <module>smartcity-parking</module>
+        <module>smartcity-food</module>
+        <module>smartcity-shopping</module>
+        <module>smartcity-energy</module>
+        <module>smartcity-environment</module>
+    </modules>
 
     <properties>
         <java.version>21</java.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.urbanlens</groupId>
+                <artifactId>smartcity-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-frontend</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/../web</directory>
-                                    <filtering>false</filtering>
-                                    <excludes>
-                                        <exclude>js/data.js</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

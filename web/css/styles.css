@@ -6,10 +6,11 @@
   --glass: rgba(243, 247, 249, 0.82);
   --line: rgba(20, 32, 40, 0.12);
   --traffic: #c47a1a;
+  --parking: #8a5a2b;
+  --food: #b4532a;
+  --shopping: #2f5f8a;
   --energy: #0f7a7a;
   --environment: #2f7a45;
-  --safety: #c24b3a;
-  --civic: #4a5d6b;
   --critical: #b3261e;
   --warning: #c47a1a;
   --online: #1f7a4d;
@@ -129,17 +130,20 @@ body {
 .layer[data-domain="traffic"][aria-pressed="true"] {
   box-shadow: inset 0 -2px 0 var(--traffic);
 }
+.layer[data-domain="parking"][aria-pressed="true"] {
+  box-shadow: inset 0 -2px 0 var(--parking);
+}
+.layer[data-domain="food"][aria-pressed="true"] {
+  box-shadow: inset 0 -2px 0 var(--food);
+}
+.layer[data-domain="shopping"][aria-pressed="true"] {
+  box-shadow: inset 0 -2px 0 var(--shopping);
+}
 .layer[data-domain="energy"][aria-pressed="true"] {
   box-shadow: inset 0 -2px 0 var(--energy);
 }
 .layer[data-domain="environment"][aria-pressed="true"] {
   box-shadow: inset 0 -2px 0 var(--environment);
-}
-.layer[data-domain="safety"][aria-pressed="true"] {
-  box-shadow: inset 0 -2px 0 var(--safety);
-}
-.layer[data-domain="civic"][aria-pressed="true"] {
-  box-shadow: inset 0 -2px 0 var(--civic);
 }
 
 .workspace {
@@ -237,10 +241,11 @@ body {
 }
 
 .asset[data-domain="traffic"] .asset__core { fill: var(--traffic); }
+.asset[data-domain="parking"] .asset__core { fill: var(--parking); }
+.asset[data-domain="food"] .asset__core { fill: var(--food); }
+.asset[data-domain="shopping"] .asset__core { fill: var(--shopping); }
 .asset[data-domain="energy"] .asset__core { fill: var(--energy); }
 .asset[data-domain="environment"] .asset__core { fill: var(--environment); }
-.asset[data-domain="safety"] .asset__core { fill: var(--safety); }
-.asset[data-domain="civic"] .asset__core { fill: var(--civic); }
 
 .asset[data-status="online"] .asset__ring { stroke: var(--online); }
 .asset[data-status="warning"] .asset__ring { stroke: var(--warning); }

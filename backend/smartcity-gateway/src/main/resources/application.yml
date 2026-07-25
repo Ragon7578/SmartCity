@@ -1,0 +1,59 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: smartcity-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: city-scene
+          uri: lb://smartcity-city-scene
+          predicates:
+            - Path=/api/v1/city/**,/api/v1/assets/**,/api/v1/system/**,/api/v1/modules/**
+        - id: traffic
+          uri: lb://smartcity-traffic
+          predicates:
+            - Path=/api/v1/traffic/**
+        - id: parking
+          uri: lb://smartcity-parking
+          predicates:
+            - Path=/api/v1/parking/**
+        - id: food
+          uri: lb://smartcity-food
+          predicates:
+            - Path=/api/v1/food/**
+        - id: shopping
+          uri: lb://smartcity-shopping
+          predicates:
+            - Path=/api/v1/shopping/**
+        - id: energy
+          uri: lb://smartcity-energy
+          predicates:
+            - Path=/api/v1/energy/**
+        - id: environment
+          uri: lb://smartcity-environment
+          predicates:
+            - Path=/api/v1/environment/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway

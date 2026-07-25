@@ -1,59 +1,69 @@
 # smartCity / 智慧城市
 
-**Urban Lens (城景)** — manage a smart city by visualizing city things first, then displaying their data visually.
+**Urban Lens (城景)** — visualize city things first, then display data visually.
 
-Java backend service + browser visualization client.
+Backend is a **Spring Cloud microservice** architecture. Business domains are separate expandable modules.
 
-## Idea
+## Modules
 
-Digitization alone is not enough.
+| Service | Port | Responsibility |
+|---------|------|----------------|
+| `smartcity-registry` | 8761 | Eureka discovery |
+| `smartcity-gateway` | 8080 | API entry + UI |
+| `smartcity-city-scene` | 8090 | Scene aggregation |
+| `smartcity-traffic` | 8081 | Traffic management |
+| `smartcity-parking` | 8082 | Parking management |
+| `smartcity-food` | 8083 | Food management |
+| `smartcity-shopping` | 8084 | Shopping management |
+| `smartcity-energy` | 8085 | Energy management |
+| `smartcity-environment` | 8086 | Environment management |
 
-1. **Visualize** roads, energy, environment, safety, and civic assets on a shared city canvas.
-2. **Display data visually** — status, meters, trends, and events attached to those assets.
-
-## Quick start (recommended)
+## Quick start
 
 Requires **Java 21** and **Maven**.
 
 ```bash
 cd backend
-mvn spring-boot:run
+chmod +x scripts/*.sh
+./scripts/start-all.sh
 ```
 
-Open [http://localhost:8080](http://localhost:8080).
+Open:
 
-The Spring Boot service:
+- UI / API gateway: http://localhost:8080
+- Eureka dashboard: http://localhost:8761
 
-- initializes the city model on startup (`CityDataInitializer`)
-- exposes REST APIs under `/api/v1`
-- serves the Urban Lens UI from the same process
-- refreshes telemetry on a schedule
+Stop:
 
-### Useful endpoints
+```bash
+./scripts/stop-all.sh
+```
+
+### Useful APIs
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/v1/city/scene` | Canvas scene (districts, corridors, assets) |
+| `GET /api/v1/city/scene` | Aggregated city canvas |
 | `GET /api/v1/assets/{id}` | Visual metrics for one asset |
-| `GET /api/v1/system/info` | Service identity |
-| `GET /actuator/health` | Health check |
+| `GET /api/v1/modules` | Module list |
+| `GET /api/v1/traffic/**` | Traffic module direct API |
+| `GET /api/v1/parking/**` | Parking module direct API |
+| `GET /api/v1/food/**` | Food module direct API |
+| `GET /api/v1/shopping/**` | Shopping module direct API |
 
-## Architecture
+## Design docs
 
-```
-web/        Visualization client (calls Java API)
-backend/    Spring Boot service (registry, fusion, scene APIs)
-docs/design Design documents
-```
-
-See [`docs/design/`](docs/design/) for the full design pack, especially:
+See [`docs/design/`](docs/design/), especially:
 
 - [Architecture](docs/design/02-architecture.md)
-- [Java Backend](docs/design/05-backend-java.md)
+- [Spring Cloud microservices](docs/design/06-spring-cloud-microservices.md)
 
-## Develop frontend only
+## Expand a module later
 
-The UI source lives in `web/`. During `mvn` builds it is copied into the backend classpath. Prefer running the Java service so the UI can reach `/api/v1`.
+1. Copy an existing domain module under `backend/`
+2. Change module name, port, and seed data
+3. Add gateway route + city-scene Feign client
+4. Deploy independently
 
 ## Tests
 

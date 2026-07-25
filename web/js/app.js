@@ -19,11 +19,16 @@
   function domainColor(domain) {
     return {
       traffic: "var(--traffic)",
+      parking: "var(--parking)",
+      food: "var(--food)",
+      shopping: "var(--shopping)",
       energy: "var(--energy)",
       environment: "var(--environment)",
-      safety: "var(--safety)",
-      civic: "var(--civic)",
-    }[domain];
+    }[domain] || "var(--energy)";
+  }
+
+  function assetLayerKey(asset) {
+    return asset.module || asset.domain;
   }
 
   function formatMetricValue(value, unit) {
@@ -60,13 +65,14 @@
   function renderAssets() {
     assetsGroup.innerHTML = scene.assets
       .map((a) => {
-        const hidden = activeDomains.size && !activeDomains.has(a.domain);
+        const key = assetLayerKey(a);
+        const hidden = activeDomains.size && !activeDomains.has(key);
         const selected = selectedId === a.id ? "is-selected" : "";
         const dim = selectedId && selectedId !== a.id ? "is-dim" : "";
         return `
         <g class="asset ${selected} ${dim} ${hidden ? "hidden" : ""}"
            data-id="${a.id}"
-           data-domain="${a.domain}"
+           data-domain="${key}"
            data-status="${a.status}"
            tabindex="0"
            role="button"
@@ -116,7 +122,8 @@
       detailState.classList.remove("hidden");
       canvasHint.textContent = "Selected asset focused — metrics from /api/v1/assets.";
 
-      document.getElementById("detail-domain").textContent = asset.domain;
+      document.getElementById("detail-domain").textContent =
+        (asset.module || asset.domain) + " service";
       document.getElementById("detail-title").textContent = asset.name;
 
       const status = document.getElementById("detail-status");
@@ -133,7 +140,8 @@
       const pct = Math.max(0, Math.min(100, (asset.hero.value / max) * 100));
       const meter = document.getElementById("detail-meter");
       meter.style.width = pct + "%";
-      meter.style.background = `linear-gradient(90deg, ${domainColor(asset.domain)}, ${domainColor(asset.domain)})`;
+      const color = domainColor(asset.module || asset.domain);
+      meter.style.background = `linear-gradient(90deg, ${color}, ${color})`;
 
       document.getElementById("detail-supporting").innerHTML = (asset.supporting || [])
         .map((s) => {
@@ -191,7 +199,8 @@
     try {
       const info = await UrbanLensApi.getSystemInfo();
       if (serviceBadge) {
-        serviceBadge.textContent = `${info.service} · ${info.assets} assets`;
+        const moduleCount = Array.isArray(info.modules) ? info.modules.length : 0;
+        serviceBadge.textContent = `${info.architecture || info.service} · ${moduleCount} modules · ${info.assets} assets`;
       }
       await loadScene();
       canvasHint.textContent = "City scene loaded from Java service. Click an asset.";
@@ -200,7 +209,7 @@
       }, 10000);
     } catch (err) {
       canvasHint.textContent =
-        "Cannot reach Java API. Start the backend: cd backend && mvn spring-boot:run";
+        "Cannot reach gateway. Start microservices: backend/scripts/start-all.sh";
       if (serviceBadge) {
         serviceBadge.textContent = "service offline";
       }

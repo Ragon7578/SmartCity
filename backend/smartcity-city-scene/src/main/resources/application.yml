@@ -1,0 +1,23 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: smartcity-city-scene
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+urbanlens:
+  city:
+    name: Harbor Ridge
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

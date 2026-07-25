@@ -2,70 +2,57 @@
 
 ## Overview
 
-Urban Lens is delivered as a **Java backend service** with a browser visualization client.
+Urban Lens is a **Spring Cloud microservice** platform with a browser visualization client.
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Presentation — City Canvas + Visual Data Panels (web/) │
-├─────────────────────────────────────────────────────────┤
-│  REST API — /api/v1  (Spring Boot controllers)          │
-├─────────────────────────────────────────────────────────┤
-│  Application Services                                   │
-│   • CitySceneService      visualization payloads        │
-│   • AssetRegistryService  city-thing catalog            │
-│   • DataFusionService     telemetry → visual status     │
-├─────────────────────────────────────────────────────────┤
-│  Asset Registry — CityRepository (in-memory → PostGIS)  │
-├─────────────────────────────────────────────────────────┤
-│  Bootstrap — CityDataInitializer seeds the city model   │
-└─────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│  Presentation — City Canvas + Visual Data Panels (web/)    │
+├────────────────────────────────────────────────────────────┤
+│  API Gateway — smartcity-gateway (:8080)                   │
+├────────────────────────────────────────────────────────────┤
+│  City Scene Aggregator — Feign fan-in across modules       │
+├────────────────────────────────────────────────────────────┤
+│  Domain Microservices (independently expandable)           │
+│   traffic · parking · food · shopping · energy · environment│
+├────────────────────────────────────────────────────────────┤
+│  Service Registry — Eureka (:8761)                         │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ## Components
 
-### 1. Asset Registry
+### Domain modules
 
-Canonical catalog of city things:
+Each business system is a deployable service with its own seed data, APIs, and telemetry:
 
-- `id`, `name`, `domain` (traffic | energy | environment | safety | civic)
-- geometry (`point` for assets, path for corridors, rect for districts)
-- status + hero / supporting metrics for visual display
+- Traffic Management
+- Parking Management
+- Food Management
+- Shopping Management
+- Energy Management
+- Environment Management
 
-Owned by `AssetRegistryService` + `CityRepository`.
+### City Scene Aggregator
 
-### 2. Data Fusion
+Calls each module’s `/visualization/contribution` endpoint and merges:
 
-Ingests (currently simulates) telemetry and maps it onto assets:
+- districts
+- corridors
+- asset glyphs + statuses
 
-- streaming metrics and trend windows
-- status machines (online / warning / critical / offline)
-- event log entries for the Data Stage
+Asset detail requests are resolved by probing module services.
 
-Owned by `DataFusionService`.
+### Gateway
 
-### 3. Visualization Scene Service
-
-Builds API payloads the UI can paint:
-
-- city scene (districts, corridors, asset glyphs)
-- asset detail (status, hero metric, trend, events)
-
-Owned by `CitySceneService`.
-
-### 4. Presentation (Urban Lens UI)
-
-Two primary surfaces, served by the same Java process in v1:
-
-1. **City Canvas** — spatial visualization of managed things
-2. **Data Stage** — visual display of selected asset metrics
+Single entry for UI and `/api/v1/**` routing by module path.
 
 ## Data Flow
 
 ```
-Initializer → Registry
-Telemetry tick → DataFusion → Asset status/metrics
-UI → GET /api/v1/city/scene → Canvas render
-UI → GET /api/v1/assets/{id} → Data Stage visuals
+Module initializer → module store
+Telemetry tick → module status/metrics
+Gateway → city-scene → Feign modules → scene JSON
+UI paints canvas, then opens visual metrics for a selected asset
 ```
 
 ## Runtime
@@ -73,14 +60,9 @@ UI → GET /api/v1/assets/{id} → Data Stage visuals
 | Concern | Choice |
 |---------|--------|
 | Language | Java 21 |
-| Framework | Spring Boot 3.3 |
-| Packaging | Maven module `backend/` |
-| UI delivery | Copied into classpath `static/` at build |
-| Port | `8080` |
+| Framework | Spring Boot 3.3 + Spring Cloud 2023.0 |
+| Discovery | Eureka |
+| Entry | Spring Cloud Gateway |
+| UI delivery | Gateway static resources |
 
-## Security & Ops Notes
-
-- Layer visibility can become role-scoped later.
-- Telemetry paths are read-mostly; write-back goes through domain systems.
-- Stale / missing data must stay visually distinct from healthy live data.
-- See [05-backend-java.md](./05-backend-java.md) for package-level detail.
+See [06-spring-cloud-microservices.md](./06-spring-cloud-microservices.md) for module-by-module detail.

@@ -34,6 +34,8 @@ dist/
 
 # Maven / Java
 backend/target/
+backend/**/target/
+backend/.run-logs/
 *.iml
 .classpath
 .project

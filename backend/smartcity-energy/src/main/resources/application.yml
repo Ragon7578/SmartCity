@@ -1,0 +1,23 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: smartcity-energy
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+urbanlens:
+  telemetry:
+    tick-ms: 10000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
