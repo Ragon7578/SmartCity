@@ -1,30 +1,8 @@
-# smartCity / 智慧城市
+# 智慧城市 / smart-city
 
-**Urban Lens (城景)** — visualize city things first, then display data visually.
+Spring Cloud 微服务 + 城市可视化。
 
-Project path: `projects/smart-city/`
-
-Remote: https://github.com/Ragon7578/smartCity
-
-Backend is a **Spring Cloud microservice** architecture. Business domains are separate expandable modules.
-
-## Modules
-
-| Service | Port | Responsibility |
-|---------|------|----------------|
-| `smartcity-registry` | 8761 | Eureka discovery |
-| `smartcity-gateway` | 8080 | API entry + UI |
-| `smartcity-city-scene` | 8090 | Scene aggregation |
-| `smartcity-traffic` | 8081 | Traffic management |
-| `smartcity-parking` | 8082 | Parking management |
-| `smartcity-food` | 8083 | Food management |
-| `smartcity-shopping` | 8084 | Shopping management |
-| `smartcity-energy` | 8085 | Energy management |
-| `smartcity-environment` | 8086 | Environment management |
-
-## Quick start
-
-Requires **Java 21** and **Maven**.
+## 启动
 
 ```bash
 cd projects/smart-city/backend
@@ -32,44 +10,32 @@ chmod +x scripts/*.sh
 ./scripts/start-all.sh
 ```
 
-Open:
-
-- UI / API gateway: http://localhost:8080
-- Eureka dashboard: http://localhost:8761
-
-Stop:
+- UI: http://localhost:8080
+- Eureka: http://localhost:8761
 
 ```bash
 ./scripts/stop-all.sh
 ```
 
-### Useful APIs
+## 模块
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/v1/city/scene` | Aggregated city canvas |
-| `GET /api/v1/assets/{id}` | Visual metrics for one asset |
-| `GET /api/v1/modules` | Module list |
-| `GET /api/v1/traffic/**` | Traffic module direct API |
-| `GET /api/v1/parking/**` | Parking module direct API |
-| `GET /api/v1/food/**` | Food module direct API |
-| `GET /api/v1/shopping/**` | Shopping module direct API |
+| 服务 | 端口 |
+|------|------|
+| registry | 8761 |
+| gateway | 8080 |
+| city-scene | 8090 |
+| traffic | 8081 |
+| parking | 8082 |
+| food | 8083 |
+| shopping | 8084 |
+| energy | 8085 |
+| environment | 8086 |
 
-## Design docs
+## 文档
 
-See [`docs/design/`](docs/design/), especially:
+见 [`docs/design/`](docs/design/)。
 
-- [Architecture](docs/design/02-architecture.md)
-- [Spring Cloud microservices](docs/design/06-spring-cloud-microservices.md)
-
-## Expand a module later
-
-1. Copy an existing domain module under `projects/smart-city/backend/`
-2. Change module name, port, and seed data
-3. Add gateway route + city-scene Feign client
-4. Deploy independently
-
-## Tests
+## 测试
 
 ```bash
 cd projects/smart-city/backend

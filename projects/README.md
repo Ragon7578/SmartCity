@@ -1,10 +1,8 @@
 # projects
 
-Each product lives in its own named directory.
-
 ```
 projects/
-└── smart-city/     # Urban Lens 智慧城市
+└── smart-city/
     ├── backend/
     ├── docs/
     ├── web/

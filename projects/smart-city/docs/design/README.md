@@ -1,21 +1,13 @@
-# Urban Lens Design Documents
+# 设计文档
 
-Design pack for the smart-city visualization platform (**Urban Lens / 城景**).
-
-## Reading Order
-
-1. [Vision](./01-vision.md) — visualize first, then display data
-2. [Architecture](./02-architecture.md) — system layers and data flow
-3. [Visualization](./03-visualization.md) — how city things become visible
-4. [Data Display](./04-data-display.md) — how metrics are shown visually
-5. [Java Backend](./05-backend-java.md) — backend layering and aggregated APIs
-6. [Spring Cloud Microservices](./06-spring-cloud-microservices.md) — module split and expansion guide
-
-## Run the platform
+1. [愿景](./01-vision.md)
+2. [架构](./02-architecture.md)
+3. [可视化](./03-visualization.md)
+4. [数据展示](./04-data-display.md)
+5. [后端](./05-backend-java.md)
+6. [微服务](./06-spring-cloud-microservices.md)
 
 ```bash
 cd projects/smart-city/backend
 ./scripts/start-all.sh
 ```
-
-Open `http://localhost:8080` — gateway serves UI + routes module APIs.
