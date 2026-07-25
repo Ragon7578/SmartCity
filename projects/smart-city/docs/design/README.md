@@ -14,7 +14,7 @@ Design pack for the smart-city visualization platform (**Urban Lens / 城景**).
 ## Run the platform
 
 ```bash
-cd backend
+cd projects/smart-city/backend
 ./scripts/start-all.sh
 ```
 

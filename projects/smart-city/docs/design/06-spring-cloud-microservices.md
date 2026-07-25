@@ -66,7 +66,7 @@ No changes are required inside unrelated business modules.
 ## Run
 
 ```bash
-cd backend
+cd projects/smart-city/backend
 ./scripts/start-all.sh
 # UI http://localhost:8080
 # Eureka http://localhost:8761

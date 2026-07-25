@@ -209,7 +209,7 @@
       }, 10000);
     } catch (err) {
       canvasHint.textContent =
-        "Cannot reach gateway. Start microservices: backend/scripts/start-all.sh";
+        "Cannot reach gateway. Start microservices: projects/smart-city/backend/scripts/start-all.sh";
       if (serviceBadge) {
         serviceBadge.textContent = "service offline";
       }
