@@ -1,69 +1,81 @@
-# Spring Cloud Microservice Architecture
+# Spring Cloud 微服务架构
 
-## Intent
+## 意图
 
-The smart-city backend is split into independently expandable Spring Cloud modules.
-Each business domain (traffic, parking, food, shopping, energy, environment) is its own service and can grow without rewriting the whole platform.
+后端按业务域拆成可独立扩展的 Spring Cloud 模块。停车、物业、小区、购物、吃喝玩乐、打卡、排行榜等都可以新增服务，而不改无关模块。
 
-## Topology
+## 拓扑
 
 ```
                  ┌──────────────────────┐
-                 │  smartcity-gateway   │  :8080  UI + API entry
-                 │  (Spring Cloud GW)   │
+                 │  smartcity-gateway   │  :8080
                  └──────────┬───────────┘
                             │
                  ┌──────────▼───────────┐
-                 │ smartcity-city-scene │  :8090  scene aggregator (Feign)
+                 │ smartcity-city-scene │  :8090
                  └──────────┬───────────┘
-       ┌─────────┬─────────┼─────────┬─────────┬─────────┐
-       ▼         ▼         ▼         ▼         ▼         ▼
-   traffic   parking     food    shopping   energy  environment
-    :8081     :8082     :8083     :8084     :8085     :8086
+        已有业务服务 │ 规划业务服务
+   traffic parking food shopping energy environment
+   community property leisure checkin ranking
                             │
                  ┌──────────▼───────────┐
-                 │ smartcity-registry   │  :8761  Eureka
+                 │ smartcity-registry   │  :8761
                  └──────────────────────┘
 ```
 
-## Maven Modules
+## 模块表
 
-| Module | Role | Expand with |
-|--------|------|-------------|
-| `smartcity-common` | Shared DTOs + module runtime | New shared contracts |
-| `smartcity-registry` | Eureka service discovery | HA registry later |
-| `smartcity-gateway` | Single entry + static UI | Auth, rate limits |
-| `smartcity-city-scene` | Aggregates module contributions | Caching, map tiles |
-| `smartcity-traffic` | Traffic management | Signals, incidents, cameras |
-| `smartcity-parking` | Parking management | Lots, pricing, reservations |
-| `smartcity-food` | Food management | Markets, inspections, queues |
-| `smartcity-shopping` | Shopping management | Malls, footfall, promotions |
-| `smartcity-energy` | Energy management | Grid, EV, outages |
-| `smartcity-environment` | Environment management | AQI, flood, noise |
+### 平台
 
-## Standard Module API
+| 模块 | 端口 | 角色 |
+|------|------|------|
+| `smartcity-common` | — | 公共 DTO 与模块运行时 |
+| `smartcity-registry` | 8761 | Eureka |
+| `smartcity-gateway` | 8080 | 入口 + UI |
+| `smartcity-city-scene` | 8090 | 场景聚合 |
 
-Every domain module exposes the same surface so new modules plug into gateway + aggregator quickly:
+### 已有业务
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/v1/{module}/info` | Service identity |
-| GET | `/api/v1/{module}/assets` | Asset list |
-| GET | `/api/v1/{module}/assets/{id}` | Visual metrics detail |
-| GET | `/api/v1/{module}/visualization/contribution` | Scene fragment |
+| 模块 | 端口 | 扩展方向 |
+|------|------|----------|
+| `smartcity-traffic` | 8081 | 信号、事件、摄像头 |
+| `smartcity-parking` | 8082 | 余位、引导、预约 |
+| `smartcity-food` | 8083 | 门店、排队、美食数据 |
+| `smartcity-shopping` | 8084 | 商场、店铺、客流 |
+| `smartcity-energy` | 8085 | 电网、充电 |
+| `smartcity-environment` | 8086 | 空气、水位、噪声 |
 
-## How to Add a New Module
+### 规划业务
 
-1. Copy an existing domain module (e.g. `smartcity-food`)
-2. Rename package / `CityModule` enum value / port / application name
-3. Seed domain-specific assets in `*DataInitializer`
-4. Add a Feign client in `smartcity-city-scene`
-5. Add a gateway route `/api/v1/{new-module}/**`
-6. Register the module in the parent `pom.xml`
+| 模块 | 建议端口 | 职责 |
+|------|----------|------|
+| `smartcity-community` | 8087 | 小区空间与配套 |
+| `smartcity-property` | 8088 | 物业工单、巡检、设施 |
+| `smartcity-leisure` | 8089 | 玩乐场馆 |
+| `smartcity-checkin` | 8091 | 打卡点与足迹 |
+| `smartcity-ranking` | 8092 | 美食/购物/打卡等榜单 |
 
-No changes are required inside unrelated business modules.
+## 标准模块 API
 
-## Run
+| 方法 | 路径 | 用途 |
+|------|------|------|
+| GET | `/api/v1/{module}/info` | 服务身份 |
+| GET | `/api/v1/{module}/assets` 或领域列表 | 对象列表 |
+| GET | `/api/v1/{module}/.../{id}` | 详情 |
+| GET | `/api/v1/{module}/visualization/contribution` | 场景碎片 |
+
+打卡与排行榜在标准贡献接口之外，另有互动 / 榜单专用 API，见对应设计文档。
+
+## 新增模块步骤
+
+1. 复制已有域模块（如 `smartcity-food`）
+2. 修改包名、`CityModule`、端口、应用名
+3. 在 `*DataInitializer` 写入领域种子数据
+4. 在 `city-scene` 增加 Feign 客户端
+5. 在 gateway 增加 `/api/v1/{new}/**` 路由
+6. 在父 `pom.xml` 注册模块
+
+## 运行
 
 ```bash
 cd projects/smart-city/backend
@@ -72,12 +84,8 @@ cd projects/smart-city/backend
 # Eureka http://localhost:8761
 ```
 
-```bash
-./scripts/stop-all.sh
-```
+## 说明
 
-## Notes
-
-- In-memory stores are intentional for the initialization phase.
-- Replace each module’s store with its own DB when that domain matures.
-- Visualization still follows: visualize city things first, then display data visually.
+- 初期可用内存仓储；成熟后各模块独立持久化
+- 可视化原则不变：先看见城市事物，再展示数据
+- 生活域设计详见 [07 城市业务域总览](./07-city-domain-overview.md) 及后续专题文档

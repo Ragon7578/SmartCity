@@ -18,13 +18,19 @@ Visualization answers: *Where is it? What kind of thing is it? How does it relat
 
 | Domain | Visual cue | Example assets |
 |--------|------------|----------------|
-| Traffic | Amber linear flow | Intersections, cameras, parking |
-| Energy | Teal nodes & arcs | Substations, EV hubs, streetlights |
-| Environment | Green soft fields | AQI stations, noise, flood gauges |
-| Safety | Coral points | Emergency posts, CCTV health |
-| Civic | Slate markers | Libraries, clinics, waste sites |
+| Traffic | Amber linear flow | Intersections, cameras |
+| Parking | Warm brown points | Lots, roadside bays |
+| Energy | Teal nodes & arcs | Substations, EV hubs |
+| Environment | Green soft fields | AQI, noise, flood gauges |
+| Community | Soft slate areas | Community boundaries, gates |
+| Property | Facility points | Elevators, pumps, cameras |
+| Food | Terracotta/orange points | Restaurants, night markets |
+| Shopping | Steel-blue points | Malls, street stores |
+| Leisure | Violet-gray points | Cinemas, venues |
+| Checkin | Compact heat points | Check-in POIs |
 
 Avoid rainbow overload: at most one accent family per active domain layer.
+Rank badges stay in the data panel by default; optional “Top N highlight” layer only.
 
 ## Interaction Model
 

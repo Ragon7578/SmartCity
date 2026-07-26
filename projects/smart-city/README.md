@@ -33,7 +33,7 @@ chmod +x scripts/*.sh
 
 ## 文档
 
-见 [`docs/design/`](docs/design/)。
+见 [`docs/design/`](docs/design/)，含停车、小区物业、吃喝玩乐、购物、打卡、排行榜等城市业务设计。
 
 ## 测试
 

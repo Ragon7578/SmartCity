@@ -1,52 +1,53 @@
-# Smart City Vision — Visualize First, Then Show Data
+# 智慧城市愿景 — 先看见城市，再看见数据
 
-## Core Idea
+## 核心想法
 
-Managing a smart city is not primarily about “digitizing” assets into databases.
-It is about two ordered steps:
+管理智慧城市，不只是把设施“数字化”进数据库，而是两步：
 
-1. **Visualize** city things — make roads, buildings, energy, water, transit, and sensors visible as a shared spatial picture.
-2. **Display data visually** — attach live metrics, status, and trends to those visuals so operators understand the city at a glance.
+1. **可视化**：道路、停车、小区、商场、餐厅、打卡点等城市事物出现在同一张图上。
+2. **可视化展示数据**：余位、排队、客流、物业健康度、榜单名次等附着在对象上，一眼能懂。
 
-Digitization is infrastructure. Visualization and visual data display are how management becomes usable.
+城市既有市政运行，也有市民生活：停车、物业、小区、购物、吃喝玩乐、打卡与排行榜，都应纳入产品范围。
 
-## Product Name
+## 产品名
 
-**Urban Lens** / 城景
+**Urban Lens / 城景**
 
-A smart-city operations surface that turns physical city systems into an interactive visual layer, then paints operational data onto that layer.
+一张可互动的城市透镜：运营者看运行状态，市民看生活服务。
 
-## Goals
+## 目标
 
-| Goal | Description |
-|------|-------------|
-| Shared spatial truth | Every managed asset has a place on the city view |
-| Glanceable status | Color, motion, and density communicate health before numbers |
-| Drill-down data | Selecting an asset reveals metrics in a visual, not tabular-first, way |
-| Domain modularity | Traffic, energy, environment, public safety plug into one canvas |
+| 目标 | 说明 |
+|------|------|
+| 空间共识 | 每个管理对象都有位置 |
+| 一眼状态 | 颜色与动效先于表格说明问题 |
+| 生活闭环 | 找停车、觅食、购物、打卡可连贯完成 |
+| 可运营榜单 | 美食榜、购物榜等可配置、可解释 |
+| 模块可扩展 | 新业务以独立微服务加入，不拖垮旧模块 |
 
-## Non-Goals (v1)
+## 非目标（近期）
 
-- Full digital twin simulation physics
-- Autonomous control loops / closed-loop actuation
-- Replacing existing SCADA or GIS systems of record
+- 完整物理级数字孪生仿真
+- 闭环自动控制替人工决策
+- 替代已有 SCADA / 专业 GIS 的系统账本地位
 
-## Principle Stack
+## 原则栈
 
 ```
-Physical City
-    ↓ sensors / GIS / IoT / municipal systems
-Digital Twin Model (identity, location, relations)
+物理城市与生活场所
+    ↓ IoT / 业务系统 / 用户互动
+领域模型（身份、位置、关系）
     ↓
-Visualization Layer (map / 3D / schematic)
+可视化层（城市场景）
     ↓
-Visual Data Display (status, charts, heat, timelines)
+视觉数据（状态、趋势、榜单、足迹）
     ↓
-Operator Action (inspect, alert, dispatch)
+行动（巡检、派单、导航、打卡、运营设点）
 ```
 
-## Success Criteria
+## 成功标准
 
-- An operator can identify a problem area in under 5 seconds from the city view alone.
-- Selecting any asset shows its current state as a visual summary before raw tables.
-- Design docs and prototype stay aligned: visualize → attach data → act.
+- 运营者 5 秒内从场景识别异常片区
+- 市民能从地图完成“附近停车 → 用餐 → 打卡”的最小闭环
+- 榜单名次可追溯到评分、客流、打卡等因子
+- 新业务域可按模块模板独立扩展
