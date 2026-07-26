@@ -59,10 +59,20 @@ For each domain, define one **hero metric** and two supporting metrics:
 | Domain | Hero metric | Supporting |
 |--------|-------------|------------|
 | Traffic | Congestion index | Throughput, incident count |
+| Parking | Occupancy % | Free spaces, turnover |
 | Energy | Load vs capacity | Outage minutes, renewable share |
 | Environment | AQI | PM2.5, noise dB |
-| Safety | Device health % | Open incidents, response time |
-| Civic | Service availability | Queue length, daily visits |
+| Community / Property | Community health | Open work orders, facility online % |
+| Food | Seat utilization / wait | Rating, check-ins 7d |
+| Shopping | Footfall index | Open stores, active promotions |
+| Leisure | Crowd index | Rating, ticket availability |
+| Checkin | Heat score | Check-ins 24h / 7d |
+| Ranking | Board position | Score, change vs last period |
+
+### 6. Rank Strip（榜条）
+
+Compact position + score bar for “美食榜 #3 / 购物榜 #1”.
+Use in detail panels, not as floating stickers on the canvas.
 
 ## Stale & Missing Data
 
