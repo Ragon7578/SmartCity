@@ -1,0 +1,14 @@
+---
+description: 本仓库 Agent 仅关注 GitHub Ragon7578/SmartCity
+alwaysApply: true
+---
+
+# 项目范围
+
+本 Agent **只**处理 **Ragon7578/SmartCity（Urban Lens / 城景）**。
+
+- 工作区根：`/Users/ragon/RagonProjects/SmartCity`
+- 主工程：`projects/smart-city/`
+- 远程：`https://github.com/Ragon7578/SmartCity.git`（仅 GitHub `origin`）
+- 不要读写或切换到 `RagonProjects` 下其他仓库（如 DuiYiDui、AiAgentStudy）
+- 不要把兑一兑业务或 Agent 学习材料写进本仓库
