@@ -10,7 +10,8 @@ description: >-
 
 ## 项目定位
 
-先可视化城市事物，再把数据做成可视化展示（visualize city things first, then display data visually）。
+城景是**城市场景平台**：先搭场景与接入契约，再以模块接入各种各样的城市内容（visualize first, plug in content）。  
+「生活方方面面」是可容纳的广度，不是必须自建的功能清单。
 
 Maven `groupId`：`com.urbanlens`。Java 21 + Spring Boot 3.3 + Spring Cloud 2023.0。
 
@@ -63,6 +64,7 @@ mvn test
 ## 文档入口
 
 - `projects/smart-city/README.md`
+- `projects/smart-city/docs/pm/`（指挥城市介绍、项目周期编排）
 - `projects/smart-city/docs/design/`（01 愿景 → 13 排行榜；含停车、物业、吃喝玩乐、购物、打卡、排行榜）
 
 ## 工作时
