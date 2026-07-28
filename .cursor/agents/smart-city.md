@@ -63,6 +63,7 @@ mvn test
 ## 文档入口
 
 - `projects/smart-city/README.md`
+- `projects/smart-city/docs/pm/`（指挥城市介绍、项目周期编排）
 - `projects/smart-city/docs/design/`（01 愿景 → 13 排行榜；含停车、物业、吃喝玩乐、购物、打卡、排行榜）
 
 ## 工作时
